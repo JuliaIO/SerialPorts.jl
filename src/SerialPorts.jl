@@ -1,5 +1,7 @@
 module SerialPorts
 
+export SerialPort, serialport
+
 using PyCall
 
 @pyimport serial
@@ -21,9 +23,16 @@ immutable SerialPort
     python_ptr
 end
 
-function Base.call(::Type{SerialPort}, port, baudrate)
+function serialport(port, baudrate)
     py_ptr = serial.Serial(port, baudrate)
     SerialPort(port, baudrate, 1, 1, 1, 1, 1, 1, 1, 1, 1, py_ptr)
+end
+
+if VERSION >= v"0.4-"
+    function Base.call(::Type{SerialPort}, port, baudrate)
+        py_ptr = serial.Serial(port, baudrate)
+        SerialPort(port, baudrate, 1, 1, 1, 1, 1, 1, 1, 1, 1, py_ptr)
+    end
 end
 
 function Base.open(serialport::SerialPort)
