@@ -15,24 +15,13 @@ installation, and performance.
 Roughly:
 
 ```
-using Serial Ports
+using SerialPorts
 s = serialport("/dev/ttyACM1", 250000)
 write(s, "G1 X1000 F10000\n")
 # if this is connected to a 3D printer it's not my fault if it breaks.
 ```
 
 on Julia 0.4 the preferred constructor is `SerialPort("/dev/ttyACM1", 250000)`.
-
-
-julia> using SerialPorts
-
-julia> s = SerialPorts.SerialPort("/dev/ttyACM1", 250000)
-ERROR: `SerialPort` has no method matching SerialPort(::ASCIIString, ::Int64)
-
-julia> s = SerialPorts.serialport("/dev/ttyACM1", 250000)
-SerialPort("/dev/ttyACM1",250000,1,1,1,1,1,1,1,1,1,PyObject Serial<id=0x7f5033a91710, open=True>(port='/dev/ttyACM1', baudrate=250000, bytesize=8, parity='N', stopbits=1, timeout=None, xonxoff=False, rtscts=False, dsrdtr=False))
-
-julia> write(s, "G1 X1000 F10000\n")
 
 
 ## License
