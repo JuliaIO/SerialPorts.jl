@@ -40,6 +40,11 @@ function Base.open(serialport::SerialPort)
     return serialport
 end
 
+function Base.close(serialport::SerialPort)
+    serialport.python_ptr[:close]()
+    return serialport
+end
+
 function Base.isreadable(ser::SerialPort)
     ser.python_ptr[:isreadable]()
 end
