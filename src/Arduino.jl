@@ -9,6 +9,7 @@ function reset(s::SerialPort)
     setDTR(s, false)
     sleep(1)
     setDTR(s, true)
+    sleep(1)
     nothing
 end
 

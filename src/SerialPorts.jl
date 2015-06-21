@@ -1,6 +1,6 @@
 module SerialPorts
 
-export SerialPort, serialport, SerialException
+export SerialPort, serialport, SerialException, setDTR
 
 using PyCall
 
@@ -67,6 +67,10 @@ end
 
 function Base.readavailable(ser::SerialPort)
     read(ser, nb_available(ser))
+end
+
+function setDTR(ser::SerialPort, val)
+    ser.python_ptr[:setDTR](val)
 end
 
 # Submodules
