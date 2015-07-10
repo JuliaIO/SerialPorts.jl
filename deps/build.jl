@@ -5,6 +5,6 @@ using Compat
 
 pyser = library_dependency("python-serial")
 
-provides(AptGet, @compat Dict(
-    "python-serial" => pyser,
-))
+provides(AptGet, "python-serial", pyser)
+
+@BinDeps.install @compat(Dict(:pyser => :serial))
