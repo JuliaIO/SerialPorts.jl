@@ -1,6 +1,6 @@
 module SerialPorts
 
-export SerialPort, serialport, SerialException, setDTR
+export SerialPort, serialport, SerialException, setDTR, list_serialports
 
 using PyCall
 
@@ -71,6 +71,24 @@ end
 
 function setDTR(ser::SerialPort, val)
     ser.python_ptr[:setDTR](val)
+end
+
+function _valid_linux_port(x)
+    startswith(x, "ttyS") || startswith(x, "ttyUSB") || startswith(x, "ttyACM")
+end
+
+function list_serialports()
+    @linux_only begin
+        ports = readdir("/dev/")
+        filter!(_valid_linux_port, ports)
+        return [string("/dev/", port) for port in ports]
+    end
+    @osx_only begin
+        #TODO
+    end
+    @windows_only begin
+        #TODO
+    end
 end
 
 # Submodules
