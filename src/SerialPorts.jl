@@ -2,6 +2,7 @@ module SerialPorts
 
 export SerialPort, serialport, SerialException, setDTR, list_serialports
 
+using Compat
 using PyCall
 
 @pyimport serial as PySerial
