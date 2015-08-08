@@ -1,3 +1,5 @@
+VERSION >= v"0.4.0-dev+6521" && __precompile__(true)
+
 module SerialPorts
 
 export SerialPort, serialport, SerialException, setDTR, list_serialports
@@ -5,7 +7,7 @@ export SerialPort, serialport, SerialException, setDTR, list_serialports
 using Compat
 using PyCall
 
-@pyimport serial as PySerial
+const PySerial = PyCall.PyNULL()
 
 type SerialException <: Base.Exception end
 
@@ -22,6 +24,15 @@ immutable SerialPort
     dsrdtr
     inter_char_timeout
     python_ptr
+end
+
+function __init__()
+    function Base.copy!(dest::PyObject, src::PyObject)
+        PyCall.pydecref(dest)
+        dest.o = src.o
+        return PyCall.pyincref(dest)
+    end
+    copy!(PySerial, pyimport("serial"))
 end
 
 function serialport(port, baudrate)
