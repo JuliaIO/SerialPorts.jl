@@ -36,13 +36,13 @@ function __init__()
 end
 
 function serialport(port, baudrate)
-    py_ptr = PySerial.Serial(port, baudrate)
+    py_ptr = PySerial[:Serial](port, baudrate)
     SerialPort(port, baudrate, 1, 1, 1, 1, 1, 1, 1, 1, 1, py_ptr)
 end
 
 if VERSION >= v"0.4-"
     function Base.call(::Type{SerialPort}, port, baudrate)
-        py_ptr = PySerial.Serial(port, baudrate)
+        py_ptr = PySerial[:Serial](port, baudrate)
         SerialPort(port, baudrate, 1, 1, 1, 1, 1, 1, 1, 1, 1, py_ptr)
     end
 end
