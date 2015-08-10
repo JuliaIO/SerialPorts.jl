@@ -103,6 +103,28 @@ function list_serialports()
     end
 end
 
+@doc """
+Check if there are permission issues with accessing serial ports on the current
+system.
+""" ->
+function check_serial_access()
+    @linux_only begin
+        current_user = ENV["USER"]
+        in_dialout() || warn("""User $current_user is not in the 'dialout' group.
+                                They can be added with:
+                                'usermod -a -G dialout $current_user'""")
+    end
+end
+
+@doc """
+On Linux, test if the current user is in the 'dialout' group.
+""" ->
+@linux_only function in_dialout()
+    pipe, proc = open(`groups`)
+    wait(proc)
+    "dialout" in split(readall(pipe))
+end
+
 # Submodules
 
 include("Arduino.jl")
