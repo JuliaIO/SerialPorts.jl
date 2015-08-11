@@ -6,6 +6,7 @@ export SerialPort, serialport, SerialException, setDTR, list_serialports
 
 using Compat
 using PyCall
+VERSION < v"0.4-" && using Docile
 
 const PySerial = PyCall.PyNULL()
 
