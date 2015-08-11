@@ -2,7 +2,8 @@ VERSION >= v"0.4.0-dev+6521" && __precompile__(true)
 
 module SerialPorts
 
-export SerialPort, serialport, SerialException, setDTR, list_serialports
+export SerialPort, serialport, SerialException, setDTR, list_serialports,
+       in_dialout, check_serial_access
 
 using Compat
 using PyCall
@@ -121,9 +122,7 @@ end
 On Linux, test if the current user is in the 'dialout' group.
 """ ->
 @linux_only function in_dialout()
-    pipe, proc = open(`groups`)
-    wait(proc)
-    "dialout" in split(readall(pipe))
+    "dialout" in split(readall(`groups`))
 end
 
 # Submodules
