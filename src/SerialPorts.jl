@@ -29,11 +29,6 @@ immutable SerialPort
 end
 
 function __init__()
-    function Base.copy!(dest::PyObject, src::PyObject)
-        PyCall.pydecref(dest)
-        dest.o = src.o
-        return PyCall.pyincref(dest)
-    end
     copy!(PySerial, pyimport("serial"))
 end
 
