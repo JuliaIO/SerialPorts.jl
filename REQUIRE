@@ -1,5 +1,6 @@
 julia 0.3
-PyCall
+BinDeps
 Compat
-Docile
 Conda
+Docile
+PyCall
