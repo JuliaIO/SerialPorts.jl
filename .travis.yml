@@ -8,7 +8,7 @@ julia:
 notifications:
   email: false
 script:
-    - git fetch --unshallow
+    - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
     - julia -e 'Pkg.clone(pwd())'
     - julia -e 'ENV["PYTHON"]="";Pkg.build("SerialPorts");'
     - julia -e 'Pkg.test("SerialPorts", coverage=true)'
