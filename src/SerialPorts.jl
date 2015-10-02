@@ -29,7 +29,22 @@ immutable SerialPort
 end
 
 function __init__()
-    copy!(PySerial, pyimport("serial"))
+    try
+        copy!(PySerial, pyimport("serial"))
+    catch e
+        if PyCall.conda
+            info("Installing serial via the Conda package...")
+            Conda.add("pyserial")
+            copy!(matplotlib, pyimport("serial"))
+        else
+            error("""Failed to pyimport("serial"): SerialPorts will not work until you have a functioning pyserial module.
+                  For automated serial installation, try configuring SerialPorts to use the Conda Python distribution within Julia.  Relaunch Julia and run:
+                        ENV["PYTHON"]=""
+                        Pkg.build("Serial")
+                        using PyPlot
+                  pyimport exception was: """, e)
+        end
+    end
 end
 
 function serialport(port, baudrate)
