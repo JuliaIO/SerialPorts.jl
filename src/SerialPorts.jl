@@ -34,7 +34,7 @@ function __init__()
         if PyCall.conda
             info("Installing serial via the Conda package...")
             Conda.add("pyserial")
-            copy!(matplotlib, pyimport("serial"))
+            copy!(PySerial, pyimport("serial"))
         else
             error("""Failed to pyimport("serial"): SerialPorts will not work until you have a functioning pyserial module.
                   For automated serial installation, try configuring SerialPorts to use the Conda Python distribution within Julia.  Relaunch Julia and run:
