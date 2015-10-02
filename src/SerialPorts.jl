@@ -5,8 +5,7 @@ module SerialPorts
 export SerialPort, serialport, SerialException, setDTR, list_serialports,
        in_dialout, check_serial_access
 
-using Compat
-using PyCall
+using Compat, Conda, PyCall
 VERSION < v"0.4-" && using Docile
 
 const PySerial = PyCall.PyNULL()
