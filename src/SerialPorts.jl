@@ -5,8 +5,7 @@ module SerialPorts
 export SerialPort, serialport, SerialException, setDTR, list_serialports,
        in_dialout, check_serial_access
 
-using Compat
-using PyCall
+using Compat, Conda, PyCall
 VERSION < v"0.4-" && using Docile
 
 const PySerial = PyCall.PyNULL()
@@ -29,12 +28,22 @@ immutable SerialPort
 end
 
 function __init__()
-    function Base.copy!(dest::PyObject, src::PyObject)
-        PyCall.pydecref(dest)
-        dest.o = src.o
-        return PyCall.pyincref(dest)
+    try
+        copy!(PySerial, pyimport("serial"))
+    catch e
+        if PyCall.conda
+            info("Installing serial via the Conda package...")
+            Conda.add("pyserial")
+            copy!(PySerial, pyimport("serial"))
+        else
+            error("""Failed to pyimport("serial"): SerialPorts will not work until you have a functioning pyserial module.
+                  For automated serial installation, try configuring SerialPorts to use the Conda Python distribution within Julia.  Relaunch Julia and run:
+                        ENV["PYTHON"]=""
+                        Pkg.build("Serial")
+                        using PyPlot
+                  pyimport exception was: """, e)
+        end
     end
-    copy!(PySerial, pyimport("serial"))
 end
 
 function serialport(port, baudrate)
