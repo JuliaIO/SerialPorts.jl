@@ -100,17 +100,22 @@ function _valid_linux_port(x)
     startswith(x, "ttyS") || startswith(x, "ttyUSB") || startswith(x, "ttyACM")
 end
 
+function _valid_darwin_port(x)
+    startswith(x, "tty.") || startswith(x, "cu.")
+end
+
+@doc """
+List available serialports on the system.
+""" ->
 function list_serialports()
-    @linux_only begin
+    @unix_only begin
         ports = readdir("/dev/")
-        filter!(_valid_linux_port, ports)
+        f = @osx ? _valid_darwin_port : _valid_linux_port
+        filter!(f, ports)
         return [string("/dev/", port) for port in ports]
     end
-    @osx_only begin
-        #TODO
-    end
     @windows_only begin
-        #TODO
+        PySerial[:tools][:list_ports][:comports]()
     end
 end
 
