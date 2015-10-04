@@ -12,7 +12,7 @@ const PySerial = PyCall.PyNULL()
 
 type SerialException <: Base.Exception end
 
-immutable SerialPort
+immutable SerialPort <: IO
     port
     baudrate
     bytesize
@@ -76,7 +76,7 @@ function Base.iswritable(ser::SerialPort)
     ser.python_ptr[:iswritable]()
 end
 
-function Base.write(serialport::SerialPort, data)
+function Base.write(serialport::SerialPort, data::ASCIIString)
     serialport.python_ptr[:write](data)
 end
 
