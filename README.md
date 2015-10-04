@@ -13,16 +13,25 @@ installation, and performance.
 
 ## Documentation
 
-A SerialPort can be treated like any other IO stream in Julia.
+A `SerialPort` can be treated like any other IO stream in Julia.
 
 A brief example:
+
 ```
 using SerialPorts
 s = SerialPort("/dev/ttyACM1", 250000)
 write(s, "G1 X1000 F10000\n")
 # if this is connected to a 3D printer it's not my fault if it breaks.
+close(s)
 ```
 
+`open`, `close`, `read`, `write`, `nb_available`, `readavailable`, are all
+directly defined for `SerialPort`.
+
+In order to see the attached serial devices, use `list_serialports()`.
+
+The `Arduino` submodule provides functionality for manipulating Arduinos over
+serial. `SerialPorts.Arduino.reset(s::SerialPort)` will reset an Arduino.
 
 ## License
 Available under the [CC0 1.0 Universal Public Domain Dedication](http://en.wikipedia.org/wiki/Creative_Commons_license#Zero_.2F_Public_domain). See: [LICENSE.md](./LICENSE.md).
