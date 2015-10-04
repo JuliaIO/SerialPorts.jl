@@ -2,8 +2,8 @@ VERSION >= v"0.4.0-dev+6521" && __precompile__(true)
 
 module SerialPorts
 
-export SerialPort, serialport, SerialException, setDTR, list_serialports,
-       in_dialout, check_serial_access
+export SerialPort, SerialException, setDTR, list_serialports,
+       check_serial_access
 
 using Compat, Conda, PyCall
 
