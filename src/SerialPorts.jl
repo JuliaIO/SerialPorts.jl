@@ -76,6 +76,10 @@ function Base.iswritable(ser::SerialPort)
     ser.python_ptr[:iswritable]()
 end
 
+function Base.write(serialport::SerialPort, data::@compat UInt8)
+    serialport.python_ptr[:write](data)
+end
+
 function Base.write(serialport::SerialPort, data::ASCIIString)
     serialport.python_ptr[:write](data)
 end
