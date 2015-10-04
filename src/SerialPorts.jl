@@ -8,6 +8,8 @@ export SerialPort, SerialException, setDTR, list_serialports,
 using Compat, Conda, PyCall
 
 const PySerial = PyCall.PyNULL()
+const PySerialListPorts = PyCall.PyNULL()
+
 
 type SerialException <: Base.Exception end
 
@@ -27,11 +29,13 @@ end
 function __init__()
     try
         copy!(PySerial, pyimport("serial"))
+        copy!(PySerialListPorts, pyimport("serial.tools.list_ports"))
     catch e
         if PyCall.conda
             info("Installing serial via the Conda package...")
             Conda.add("pyserial")
             copy!(PySerial, pyimport("serial"))
+            copy!(PySerialListPorts, pyimport("serial.tools.list_ports"))
         else
             error("""Failed to pyimport("serial"): SerialPorts will not work until you have a functioning pyserial module.
                   For automated serial installation, try configuring SerialPorts to use the Conda Python distribution within Julia.  Relaunch Julia and run:
@@ -118,7 +122,7 @@ function list_serialports()
         return [string("/dev/", port) for port in ports]
     end
     @windows_only begin
-        PySerial[:tools][:list_ports][:comports]()
+        [i[1] for i in collect(PySerialListPorts[:comports]())]
     end
 end
 
