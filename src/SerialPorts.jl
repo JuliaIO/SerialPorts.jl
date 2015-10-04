@@ -12,18 +12,16 @@ const PySerial = PyCall.PyNULL()
 type SerialException <: Base.Exception end
 
 immutable SerialPort <: IO
-    port
-    baudrate
-    bytesize
-    parity
-    stopbits
+    port::ASCIIString
+    baudrate::Int
+    bytesize::Int
+    parity::ASCIIString
+    stopbits::Int
     timeout
-    xonxoff
-    rtscts
-    write_timeout
-    dsrdtr
-    inter_char_timeout
-    python_ptr
+    xonxoff::Bool
+    rtscts::Bool
+    dsrdtr::Bool
+    python_ptr::PyObject
 end
 
 function __init__()
