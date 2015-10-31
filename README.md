@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/sjkelly/SerialPorts.jl.svg?branch=master)](https://travis-ci.org/sjkelly/SerialPorts.jl)
 [![Coverage Status](https://img.shields.io/coveralls/sjkelly/SerialPorts.jl.svg)](https://coveralls.io/r/sjkelly/SerialPorts.jl?branch=master)
 
+[![SerialPorts](http://pkg.julialang.org/badges/SerialPorts_0.3.svg)](http://pkg.julialang.org/?pkg=SerialPorts)
+
 [![SerialPorts](http://pkg.julialang.org/badges/SerialPorts_0.4.svg)](http://pkg.julialang.org/?pkg=SerialPorts)
 
 SerialPorts.jl lets you work with devices over serial communication with Julia.
