@@ -138,10 +138,10 @@ function check_serial_access()
     end
 end
 
-@doc """
+@linux_only @doc """
 On Linux, test if the current user is in the 'dialout' group.
 """ ->
-@linux_only function in_dialout()
+function in_dialout()
     "dialout" in split(readall(`groups`))
 end
 
