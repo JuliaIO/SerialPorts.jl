@@ -6,6 +6,7 @@ export SerialPort, SerialException, setDTR, list_serialports,
        check_serial_access
 
 using Compat, Conda, PyCall
+VERSION < v"0.4-" && using Docile
 
 const PySerial = PyCall.PyNULL()
 const PySerialListPorts = PyCall.PyNULL()
@@ -47,18 +48,16 @@ function __init__()
     end
 end
 
-
-function Base.call(::Type{SerialPort}, port, baudrate)
+function serialport(port, baudrate)
     py_ptr = PySerial[:Serial](port, baudrate)
-    SerialPort(port,
-               baudrate,
-               py_ptr[:bytesize],
-               py_ptr[:parity],
-               py_ptr[:stopbits],
-               py_ptr[:timeout],
-               py_ptr[:xonxoff],
-               py_ptr[:rtscts],
-               py_ptr[:dsrdtr], py_ptr)
+    SerialPort(port, baudrate, 1, 1, 1, 1, 1, 1, 1, 1, 1, py_ptr)
+end
+
+if VERSION >= v"0.4-"
+    function Base.call(::Type{SerialPort}, port, baudrate)
+        py_ptr = PySerial[:Serial](port, baudrate)
+        SerialPort(port, baudrate, 1, 1, 1, 1, 1, 1, 1, 1, 1, py_ptr)
+    end
 end
 
 function Base.open(serialport::SerialPort)
@@ -79,7 +78,7 @@ function Base.iswritable(ser::SerialPort)
     ser.python_ptr[:iswritable]()
 end
 
-function Base.write(serialport::SerialPort, data::UInt8)
+function Base.write(serialport::SerialPort, data::@compat UInt8)
     serialport.python_ptr[:write](data)
 end
 
@@ -111,9 +110,9 @@ function _valid_darwin_port(x)
     startswith(x, "tty.") || startswith(x, "cu.")
 end
 
-"""
+@doc """
 List available serialports on the system.
-"""
+""" ->
 function list_serialports()
     @unix_only begin
         ports = readdir("/dev/")
@@ -126,10 +125,10 @@ function list_serialports()
     end
 end
 
-"""
+@doc """
 Check if there are permission issues with accessing serial ports on the current
 system.
-"""
+""" ->
 function check_serial_access()
     @linux_only begin
         current_user = ENV["USER"]
@@ -139,9 +138,9 @@ function check_serial_access()
     end
 end
 
-"""
+@doc """
 On Linux, test if the current user is in the 'dialout' group.
-"""
+""" ->
 @linux_only function in_dialout()
     "dialout" in split(readall(`groups`))
 end
