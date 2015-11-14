@@ -50,13 +50,20 @@ end
 
 function serialport(port, baudrate)
     py_ptr = PySerial[:Serial](port, baudrate)
-    SerialPort(port, baudrate, 1, 1, 1, 1, 1, 1, 1, 1, 1, py_ptr)
+    SerialPort(port,
+               baudrate,
+               py_ptr[:bytesize],
+               py_ptr[:parity],
+               py_ptr[:stopbits],
+               py_ptr[:timeout],
+               py_ptr[:xonxoff],
+               py_ptr[:rtscts],
+               py_ptr[:dsrdtr], py_ptr)
 end
 
 if VERSION >= v"0.4-"
     function Base.call(::Type{SerialPort}, port, baudrate)
-        py_ptr = PySerial[:Serial](port, baudrate)
-        SerialPort(port, baudrate, 1, 1, 1, 1, 1, 1, 1, 1, 1, py_ptr)
+        serialport(port, baudrate)
     end
 end
 
