@@ -5,7 +5,7 @@ module SerialPorts
 export SerialPort, SerialException, setDTR, list_serialports,
        check_serial_access
 
-using Compat, Conda, PyCall
+using Compat, Conda, PyCall, StringEncodings
 VERSION < v"0.4-" && using Docile
 
 const PySerial = PyCall.PyNULL()
@@ -91,6 +91,31 @@ end
 
 function Base.write(serialport::SerialPort, data::ASCIIString)
     serialport.python_ptr[:write](data)
+end
+
+function Base.write(serialport::SerialPort, data::UTF8String)
+       bytes = encode(data,"UTF-8")
+
+       if bytes[1] == 87
+         if sizeof(bytes) == 3 serialport.python_ptr[:write](bytes)  end
+         if sizeof(bytes) == 4
+              if bytes[3] == 195  bytes[4] = bytes[4] + 64 end
+              three_bytes = [ bytes[1] , bytes[2] , bytes[4] ]
+              serialport.python_ptr[:write](three_bytes)
+         end
+       
+       elseif bytes[1] == 77
+         if sizeof(bytes) == 3 || sizeof(bytes) == 4  serialport.python_ptr[:write](bytes)  end
+         if sizeof(bytes) == 5
+              if bytes[4] == 195  bytes[5] = bytes[5] + 64 end
+              four_bytes = [ bytes[1] , bytes[2] , bytes[3] , bytes[5] ]
+              serialport.python_ptr[:write](four_bytes)
+         end     
+       
+       else
+         serialport.python_ptr[:write](bytes)
+       end
+
 end
 
 function Base.read(ser::SerialPort, bytes::Integer)
