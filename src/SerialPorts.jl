@@ -29,7 +29,7 @@ end
 
 function __init__()
     copy!(PySerial, pyimport_conda("serial", "pyserial"))
-    copy!(PySerialListPorts, pyimport_conda("serial.tools.list_ports", "pyserial"))
+    copy!(PySerialListPorts, pyimport("serial.tools.list_ports"))
 end
 
 function serialport(port, baudrate)
