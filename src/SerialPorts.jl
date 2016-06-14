@@ -110,7 +110,14 @@ function Base.write(serialport::SerialPort, data::UTF8String)
               if bytes[4] == 195  bytes[5] = bytes[5] + 64 end
               four_bytes = [ bytes[1] , bytes[2] , bytes[3] , bytes[5] ]
               serialport.python_ptr[:write](four_bytes)
-         end     
+         end
+         
+       elseif bytes[1] == 83
+         if sizeof(bytes) == 4 serialport.python_ptr[:write](bytes)  end
+         if sizeof(bytes) == 5
+              four_bytes = [ bytes[1] , bytes[2] , bytes[3] , bytes[5] ]
+              serialport.python_ptr[:write](four_bytes)
+         end
        
        else
          serialport.python_ptr[:write](bytes)
