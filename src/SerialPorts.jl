@@ -78,35 +78,26 @@ function Base.write(serialport::SerialPort, data::ASCIIString)
 end
 
 function Base.write(serialport::SerialPort, data::UTF8String)
-       bytes = encode(data,"UTF-8")
-
-       if bytes[1] == 87
-         if sizeof(bytes) == 3 serialport.python_ptr[:write](bytes)  end
-         if sizeof(bytes) == 4
-              if bytes[3] == 195  bytes[4] = bytes[4] + 64 end
-              three_bytes = [ bytes[1] , bytes[2] , bytes[4] ]
-              serialport.python_ptr[:write](three_bytes)
-         end
-       
-       elseif bytes[1] == 77
-         if sizeof(bytes) == 3 || sizeof(bytes) == 4  serialport.python_ptr[:write](bytes)  end
-         if sizeof(bytes) == 5
-              if bytes[4] == 195  bytes[5] = bytes[5] + 64 end
-              four_bytes = [ bytes[1] , bytes[2] , bytes[3] , bytes[5] ]
-              serialport.python_ptr[:write](four_bytes)
-         end
-         
-       elseif bytes[1] == 83
-         if sizeof(bytes) == 4 serialport.python_ptr[:write](bytes)  end
-         if sizeof(bytes) == 5
-              four_bytes = [ bytes[1] , bytes[2] , bytes[3] , bytes[5] ]
-              serialport.python_ptr[:write](four_bytes)
-         end
-       
-       else
-         serialport.python_ptr[:write](bytes)
-       end
-
+	bytes = encode(data,"UTF-8")
+    if sizeof(bytes) == length(data)
+        serialport.python_ptr[:write](bytes)
+    else
+        i = 1
+        a = Array(Int64,1)
+        while i <= sizeof(data)
+            if sizeof(string(data[i:i])) == 2
+                if bytes[i] == 195 bytes[i+1] = bytes[i+1]+64  end
+            push!(a,i+1)
+            i = i+2
+            else
+                push!(a,i)
+                i = i+1
+            end
+        end
+        a = a[2:end]
+        bytes = bytes[a]
+        serialport.python_ptr[:write](bytes)
+    end
 end
 
 function Base.read(ser::SerialPort, bytes::Integer)
