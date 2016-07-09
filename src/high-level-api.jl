@@ -199,12 +199,39 @@ reseteof(sp::SerialPort) = seteof(sp, false)
 
 function Base.read(sp::SerialPort, ::Type{UInt8})
     byte_array = sp_nonblocking_read(sp.ref, 1)
-    return (length(byte_array) > 0) ? byte_array[1] : 0x00
+    return (length(byte_array) > 0) ? UInt8(byte_array[1]) : 0x00
 end
 
 function Base.read(sp::SerialPort, ::Type{Char})
     byte_array = sp_nonblocking_read(sp.ref, 1)
-    return (length(byte_array) > 0) ? byte_array[1] : '\0'
+    return (length(byte_array) > 0) ? Char(byte_array[1]) : '\0'
+end
+
+"""
+Read until the specified delimiting byte (e.g. '\n') is encountered, or until
+timeout_ms has elapsed, whichever comes first.
+"""
+function Base.readuntil(sp::SerialPort, delim::Char, timeout_ms::Integer)
+    # TODO: this is in Base (io.jl) - is it also needed here?
+    # if delim < Char(0x80)
+    #     return String(readuntil(sp, delim % UInt8))
+    # end
+
+    start_time = time_ns()
+    out = IOBuffer()
+    while !eof(sp)
+        if (time_ns() - start_time)/1e6 > timeout_ms
+            break
+        end
+        if nb_available(sp) > 0
+            c = read(sp, Char)
+            write(out, c)
+            if c == delim
+                break
+            end
+        end
+    end
+    return takebuf_string(out)
 end
 
 """
