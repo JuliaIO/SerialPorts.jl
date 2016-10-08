@@ -3,5 +3,7 @@ using Base.Test
 
 @show list_serialports()
 
-@linux_only SerialPorts.in_dialout()
+@static if is_linux()
+    SerialPorts.in_dialout()
+end
 SerialPorts.check_serial_access()
