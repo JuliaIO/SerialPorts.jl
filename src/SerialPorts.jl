@@ -10,15 +10,15 @@ VERSION < v"0.4-" && using Docile
 
 const PySerial = PyCall.PyNULL()
 const PySerialListPorts = PyCall.PyNULL()
-
+const SerialString= @static VERSION >= v"0.5" ? String : ASCIIString
 
 type SerialException <: Base.Exception end
 
 immutable SerialPort <: IO
-    port::ASCIIString
+    port::SerialString
     baudrate::Int
     bytesize::Int
-    parity::ASCIIString
+    parity::SerialString
     stopbits::Int
     timeout
     xonxoff::Bool
@@ -45,10 +45,16 @@ function serialport(port, baudrate)
                py_ptr[:dsrdtr], py_ptr)
 end
 
-if VERSION >= v"0.4-"
+@static if v"0.5" > VERSION >= v"0.4-"
     function Base.call(::Type{SerialPort}, port, baudrate)
         serialport(port, baudrate)
     end
+end
+
+@static if VERSION >= v"0.5"
+   function (::Type{SerialPort})(port, baudrate)
+       serialport(port, baudrate)
+   end
 end
 
 function Base.open(serialport::SerialPort)
@@ -73,7 +79,7 @@ function Base.write(serialport::SerialPort, data::@compat UInt8)
     serialport.python_ptr[:write](data)
 end
 
-function Base.write(serialport::SerialPort, data::ASCIIString)
+function Base.write(serialport::SerialPort, data::SerialString)
     serialport.python_ptr[:write](data)
 end
 
@@ -87,7 +93,7 @@ end
 
 function Base.readavailable(ser::SerialPort)
     read(ser, nb_available(ser))
-end
+	end
 
 function setDTR(ser::SerialPort, val)
     ser.python_ptr[:setDTR](val)
@@ -105,13 +111,13 @@ end
 List available serialports on the system.
 """ ->
 function list_serialports()
-    @unix_only begin
+    @static if is_unix()
         ports = readdir("/dev/")
-        f = @osx ? _valid_darwin_port : _valid_linux_port
+	f = is_apple() ? _valid_darwin_port : _valid_linux_port
         filter!(f, ports)
         return [string("/dev/", port) for port in ports]
     end
-    @windows_only begin
+    @static if is_windows()
         [i[1] for i in collect(PySerialListPorts[:comports]())]
     end
 end
@@ -121,7 +127,7 @@ Check if there are permission issues with accessing serial ports on the current
 system.
 """ ->
 function check_serial_access()
-    @linux_only begin
+    @static if is_unix()
         current_user = ENV["USER"]
         in_dialout() || warn("""User $current_user is not in the 'dialout' group.
                                 They can be added with:
@@ -129,11 +135,12 @@ function check_serial_access()
     end
 end
 
-@linux_only @doc """
+@static if is_unix() @doc"""
 On Linux, test if the current user is in the 'dialout' group.
 """ ->
 function in_dialout()
-    "dialout" in split(readall(`groups`))
+    "dialout" in split(readstring(`groups`))
+end
 end
 
 # Submodules
