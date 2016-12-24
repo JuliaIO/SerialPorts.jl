@@ -135,12 +135,13 @@ function check_serial_access()
     end
 end
 
-@static if is_unix() @doc"""
-On Linux, test if the current user is in the 'dialout' group.
+@doc """
+On Unix, test if the current user is in the 'dialout' group.
 """ ->
 function in_dialout()
-    "dialout" in split(readstring(`groups`))
-end
+    @static if is_unix()
+        "dialout" in split(readstring(`groups`))
+    end
 end
 
 # Submodules
