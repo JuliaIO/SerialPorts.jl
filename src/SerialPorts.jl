@@ -144,6 +144,23 @@ function in_dialout()
     end
 end
 
+@doc """
+Initialize a REPL. Calling conventions are identical to `SerialPort`
+""" ->
+function REPL(args...)
+    s = SerialPort(args...)
+    @async begin
+        while true
+            print(String(readavailable(s)))
+        end
+    end
+    while true
+        print_with_color(:magenta, "\nserial> ")
+        c = readline()
+        !isspace(c) && write(s, c)
+    end
+end
+
 # Submodules
 
 include("Arduino.jl")
