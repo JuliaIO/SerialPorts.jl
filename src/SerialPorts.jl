@@ -145,10 +145,9 @@ function in_dialout()
 end
 
 @doc """
-Initialize a REPL. Calling conventions are identical to `SerialPort`
+Initialize a REPL. Calling conventions are identical to `SerialPort`.
 """ ->
-function REPL(args...)
-    s = SerialPort(args...)
+function REPL(s::SerialPort)
     @async begin
         while true
             print(String(readavailable(s)))
@@ -157,8 +156,12 @@ function REPL(args...)
     while true
         print_with_color(:magenta, "\nserial> ")
         c = readline()
-        !isspace(c) && write(s, c)
+        !isspace(c) && write(s, c) # Don't send newlines
     end
+end
+
+function REPL(args...)
+    REPL(SerialPort(args...))
 end
 
 # Submodules
