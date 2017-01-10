@@ -3,12 +3,12 @@ os:
   - linux
   - osx
 julia:
-  - 0.3
   - 0.4
+  - 0.5
   - nightly
 notifications:
   email: false
-sudo: false
+sudo: true
 script:
     - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
     - julia -e 'Pkg.clone(pwd())'
