@@ -1,5 +1,6 @@
 using SerialPorts
 using Base.Test
+using Compat
 
 @show list_serialports()
 
