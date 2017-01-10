@@ -93,7 +93,7 @@ end
 
 function Base.readavailable(ser::SerialPort)
     read(ser, nb_available(ser))
-	end
+end
 
 function setDTR(ser::SerialPort, val)
     ser.python_ptr[:setDTR](val)
@@ -113,7 +113,7 @@ List available serialports on the system.
 function list_serialports()
     @static if is_unix()
         ports = readdir("/dev/")
-	f = is_apple() ? _valid_darwin_port : _valid_linux_port
+        f = is_apple() ? _valid_darwin_port : _valid_linux_port
         filter!(f, ports)
         return [string("/dev/", port) for port in ports]
     end
