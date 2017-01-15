@@ -80,7 +80,7 @@ function Base.write(serialport::SerialPort, data::@compat UInt8)
 end
 
 function Base.write(serialport::SerialPort, data::UTF8String)
-	bytes = encode(data,"UTF-8")
+    bytes = encode(data,"UTF-8")
     if sizeof(bytes) == length(data)
         serialport.python_ptr[:write](bytes)
     else
