@@ -1,11 +1,10 @@
 # SerialPorts
 
-[![Build Status](https://travis-ci.org/juliaio/SerialPorts.jl.svg?branch=master)](https://travis-ci.org/juliaio/SerialPorts.jl)
-[![Coverage Status](https://img.shields.io/coveralls/juliaio/SerialPorts.jl.svg)](https://coveralls.io/r/juliaio/SerialPorts.jl?branch=master)
+[![Build Status](https://travis-ci.org/JuliaIO/SerialPorts.jl.svg?branch=master)](https://travis-ci.org/JuliaIO/SerialPorts.jl)
 
 [![SerialPorts](http://pkg.julialang.org/badges/SerialPorts_0.4.svg)](http://pkg.julialang.org/?pkg=SerialPorts)
-
 [![SerialPorts](http://pkg.julialang.org/badges/SerialPorts_0.5.svg)](http://pkg.julialang.org/?pkg=SerialPorts)
+[![SerialPorts](http://pkg.julialang.org/badges/SerialPorts_0.6.svg)](http://pkg.julialang.org/?pkg=SerialPorts)
 
 SerialPorts.jl lets you work with devices over serial communication with Julia.
 It is designed to mimic regular file IO as in the Base Julia library.
@@ -24,8 +23,7 @@ A brief example:
 ```
 using SerialPorts
 s = SerialPort("/dev/ttyACM1", 250000)
-write(s, "G1 X1000 F10000\n")
-# if this is connected to a 3D printer it's not my fault if it breaks.
+write(s, "Hello World!\n")
 close(s)
 ```
 
