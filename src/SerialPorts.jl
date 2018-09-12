@@ -6,15 +6,14 @@ export SerialPort, SerialException, setDTR, list_serialports,
        check_serial_access
 
 using Compat, PyCall
-VERSION < v"0.4-" && using Docile
 
 const PySerial = PyCall.PyNULL()
 const PySerialListPorts = PyCall.PyNULL()
 const SerialString= @static VERSION >= v"0.5" ? String : ASCIIString
 
-type SerialException <: Base.Exception end
+struct SerialException <: Base.Exception end
 
-immutable SerialPort <: IO
+struct SerialPort <: IO
     port::SerialString
     baudrate::Int
     bytesize::Int
@@ -87,7 +86,7 @@ function Base.read(ser::SerialPort, bytes::Integer)
     ser.python_ptr[:read](bytes)
 end
 
-function Base.nb_available(ser::SerialPort)
+function Base.bytesavailable(ser::SerialPort)
     ser.python_ptr[:inWaiting]()
 end
 
@@ -111,13 +110,13 @@ end
 List available serialports on the system.
 """ ->
 function list_serialports()
-    @static if is_unix()
+    @static if Sys.isunix()
         ports = readdir("/dev/")
-        f = is_apple() ? _valid_darwin_port : _valid_linux_port
+        f = Sys.isapple() ? _valid_darwin_port : _valid_linux_port
         filter!(f, ports)
         return [string("/dev/", port) for port in ports]
     end
-    @static if is_windows()
+    @static if Sys.iswindows()
         [i[1] for i in collect(PySerialListPorts[:comports]())]
     end
 end
@@ -127,7 +126,7 @@ Check if there are permission issues with accessing serial ports on the current
 system.
 """ ->
 function check_serial_access()
-    @static if is_unix()
+    @static if Sys.isunix()
         current_user = ENV["USER"]
         in_dialout() || warn("""User $current_user is not in the 'dialout' group.
                                 They can be added with:
@@ -139,7 +138,7 @@ end
 On Unix, test if the current user is in the 'dialout' group.
 """ ->
 function in_dialout()
-    @static if is_unix()
+    @static if Sys.isunix()
         "dialout" in split(readstring(`groups`))
     end
 end

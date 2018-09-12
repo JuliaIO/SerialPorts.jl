@@ -1,10 +1,9 @@
 using SerialPorts
-using Base.Test
+using Test
 using Compat
 
 @show list_serialports()
 
-@static if is_linux()
-    SerialPorts.in_dialout()
-end
+SerialPorts.in_dialout()
+
 SerialPorts.check_serial_access()
