@@ -74,12 +74,12 @@ function Base.iswritable(ser::SerialPort)
     ser.python_ptr[:iswritable]()
 end
 
-function Base.write(serialport::SerialPort, data::@compat UInt8)
-    serialport.python_ptr[:write](data)
+function Base.write(serialport::SerialPort, data::UInt8)
+    serialport.python_ptr[:write](Base.CodeUnits(String([data])))
 end
 
-function Base.write(serialport::SerialPort, data::SerialString)
-    serialport.python_ptr[:write](data)
+function Base.write(serialport::SerialPort, data::String)
+    serialport.python_ptr[:write](Base.CodeUnits(data))
 end
 
 function Base.read(ser::SerialPort, bytes::Integer)
