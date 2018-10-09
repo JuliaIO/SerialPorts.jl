@@ -123,9 +123,9 @@ system.
 function check_serial_access()
     @static if Sys.isunix()
         current_user = ENV["USER"]
-        in_dialout() || warn("""User $current_user is not in the 'dialout' group.
-                                They can be added with:
-                                'usermod -a -G dialout $current_user'""")
+        in_dialout() || @warn """User $current_user is not in the 'dialout' group.
+                                 They can be added with:
+                                  'usermod -a -G dialout $current_user'"""
     end
 end
 
@@ -134,7 +134,7 @@ On Unix, test if the current user is in the 'dialout' group.
 """
 function in_dialout()
     @static if Sys.isunix()
-        "dialout" in split(readstring(`groups`))
+        "dialout" in split(read(`groups`, String))
     end
 end
 
