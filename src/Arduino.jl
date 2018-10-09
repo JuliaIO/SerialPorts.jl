@@ -3,7 +3,9 @@ module Arduino
 using SerialPorts
 
 """
-Do the magic to reset and Arduino board.
+    SerialPorts.Arduino.reset
+
+Reset an Arduino board.
 """
 function Base.reset(s::SerialPort)
     setDTR(s, false)
@@ -14,4 +16,3 @@ function Base.reset(s::SerialPort)
 end
 
 end #module
-
