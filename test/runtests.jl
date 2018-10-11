@@ -1,6 +1,5 @@
 using SerialPorts
 using Test
-using Compat
 
 @show list_serialports()
 

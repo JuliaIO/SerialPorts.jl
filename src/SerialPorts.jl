@@ -1,23 +1,20 @@
-VERSION >= v"0.4.0-dev+6521" && __precompile__(true)
-
 module SerialPorts
 
 export SerialPort, SerialException, setDTR, list_serialports,
        check_serial_access
 
-using Compat, PyCall
+using PyCall
 
 const PySerial = PyCall.PyNULL()
 const PySerialListPorts = PyCall.PyNULL()
-const SerialString= @static VERSION >= v"0.5" ? String : ASCIIString
 
 struct SerialException <: Base.Exception end
 
 struct SerialPort <: IO
-    port::SerialString
+    port::String
     baudrate::Int
     bytesize::Int
-    parity::SerialString
+    parity::String
     stopbits::Int
     timeout
     xonxoff::Bool
@@ -31,7 +28,7 @@ function __init__()
     copy!(PySerialListPorts, pyimport("serial.tools.list_ports"))
 end
 
-function serialport(port, baudrate)
+function SerialPort(port, baudrate::Real)
     py_ptr = PySerial[:Serial](port, baudrate)
     SerialPort(port,
                baudrate,
@@ -44,20 +41,12 @@ function serialport(port, baudrate)
                py_ptr[:dsrdtr], py_ptr)
 end
 
-@static if v"0.5" > VERSION >= v"0.4-"
-    function Base.call(::Type{SerialPort}, port, baudrate)
-        serialport(port, baudrate)
-    end
-end
-
-@static if VERSION >= v"0.5"
-   function (::Type{SerialPort})(port, baudrate)
-       serialport(port, baudrate)
-   end
+function Base.isopen(serialport::SerialPort)
+    serialport.python_ptr[:isOpen]()
 end
 
 function Base.open(serialport::SerialPort)
-    serialport.python_ptr[:open]()
+    !isopen(serialport) && serialport.python_ptr[:open]()
     return serialport
 end
 
@@ -66,20 +55,24 @@ function Base.close(serialport::SerialPort)
     return serialport
 end
 
+function Base.flush(ser::SerialPort)
+    ser.python_ptr[:flush]()
+end
+
 function Base.isreadable(ser::SerialPort)
-    ser.python_ptr[:isreadable]()
+    ser.python_ptr[:readable]()
 end
 
 function Base.iswritable(ser::SerialPort)
-    ser.python_ptr[:iswritable]()
+    ser.python_ptr[:writable]()
 end
 
-function Base.write(serialport::SerialPort, data::@compat UInt8)
-    serialport.python_ptr[:write](data)
+function Base.write(serialport::SerialPort, data::UInt8)
+    serialport.python_ptr[:write](Base.CodeUnits(String([data])))
 end
 
-function Base.write(serialport::SerialPort, data::SerialString)
-    serialport.python_ptr[:write](data)
+function Base.write(serialport::SerialPort, data::String)
+    serialport.python_ptr[:write](Base.CodeUnits(data))
 end
 
 function Base.read(ser::SerialPort, bytes::Integer)
@@ -91,7 +84,7 @@ function Base.bytesavailable(ser::SerialPort)
 end
 
 function Base.readavailable(ser::SerialPort)
-    read(ser, nb_available(ser))
+    read(ser, bytesavailable(ser))
 end
 
 function setDTR(ser::SerialPort, val)
@@ -106,9 +99,11 @@ function _valid_darwin_port(x)
     startswith(x, "tty.") || startswith(x, "cu.")
 end
 
-@doc """
+"""
+    SerialPorts.list_serialports
+
 List available serialports on the system.
-""" ->
+"""
 function list_serialports()
     @static if Sys.isunix()
         ports = readdir("/dev/")
@@ -121,25 +116,25 @@ function list_serialports()
     end
 end
 
-@doc """
+"""
 Check if there are permission issues with accessing serial ports on the current
 system.
-""" ->
+"""
 function check_serial_access()
     @static if Sys.isunix()
         current_user = ENV["USER"]
-        in_dialout() || warn("""User $current_user is not in the 'dialout' group.
-                                They can be added with:
-                                'usermod -a -G dialout $current_user'""")
+        in_dialout() || @warn """User $current_user is not in the 'dialout' group.
+                                 They can be added with:
+                                  'usermod -a -G dialout $current_user'"""
     end
 end
 
-@doc """
+"""
 On Unix, test if the current user is in the 'dialout' group.
-""" ->
+"""
 function in_dialout()
     @static if Sys.isunix()
-        "dialout" in split(readstring(`groups`))
+        "dialout" in split(read(`groups`, String))
     end
 end
 

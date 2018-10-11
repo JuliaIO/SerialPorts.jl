@@ -2,9 +2,7 @@
 
 [![Build Status](https://travis-ci.org/JuliaIO/SerialPorts.jl.svg?branch=master)](https://travis-ci.org/JuliaIO/SerialPorts.jl)
 
-[![SerialPorts](http://pkg.julialang.org/badges/SerialPorts_0.4.svg)](http://pkg.julialang.org/?pkg=SerialPorts)
-[![SerialPorts](http://pkg.julialang.org/badges/SerialPorts_0.5.svg)](http://pkg.julialang.org/?pkg=SerialPorts)
-[![SerialPorts](http://pkg.julialang.org/badges/SerialPorts_0.6.svg)](http://pkg.julialang.org/?pkg=SerialPorts)
+[![SerialPorts](http://pkg.julialang.org/badges/SerialPorts_0.7.svg)](http://pkg.julialang.org/?pkg=SerialPorts)
 
 SerialPorts.jl lets you work with devices over serial communication with Julia.
 It is designed to mimic regular file IO as in the Base Julia library.
@@ -27,7 +25,7 @@ write(s, "Hello World!\n")
 close(s)
 ```
 
-`open`, `close`, `read`, `write`, `nb_available`, `readavailable`, are all
+`open`, `close`, `read`, `write`, `bytesavailable`, `readavailable`, are all
 defined for `SerialPort`.
 
 In order to see the attached serial devices, use `list_serialports()`.
