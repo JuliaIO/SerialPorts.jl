@@ -25,5 +25,7 @@ sleep(1)
 @show write(s, txt)
 sleep(1)
 @show readavailable(s)
+@show write(s, Vector{UInt8}("Hello\n")) #22
+@show readavailable(s)
 
 close(s)
