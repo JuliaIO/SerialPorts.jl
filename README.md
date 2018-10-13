@@ -34,5 +34,4 @@ The `Arduino` submodule provides functionality for manipulating Arduinos over
 serial. `SerialPorts.Arduino.reset(s::SerialPort)` will reset an Arduino.
 
 ## License
-Available under the [CC0 1.0 Universal Public Domain Dedication](http://en.wikipedia.org/wiki/Creative_Commons_license#Zero_.2F_Public_domain). See: [LICENSE.md](./LICENSE.md).
-
+Available under the [MIT License](https://en.wikipedia.org/wiki/MIT_License). See: [LICENSE.md](./LICENSE.md).
