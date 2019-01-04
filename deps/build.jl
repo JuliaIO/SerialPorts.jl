@@ -1,32 +1,38 @@
 using Base.Sys
 using PyCall
 
-pip = run(`pip -V`)
+pip_success=true
 
-pip.exitcode == 0 && run(`pip install serial`)
+try
+    pip = run(`pip -V`)
+    pip.exitcode == 0 && run(`pip install pyserial`)
+catch err
+    pip_success = false
+end
 
-# # Change that to whatever packages you need.
-# PACKAGES = ["serial"]
+pip_success && exit(0) # pip shell out worked, else install in deps
 
-# # Import pip
-# try
-#     @pyimport pip
-# catch
-#     # If it is not found, install it
-#     get_pip = joinpath(dirname(@__FILE__), "get-pip.py")
-#     download("https://bootstrap.pypa.io/get-pip.py", get_pip)
-#     run(`$(PyCall.python) $get_pip --user`)
-# end
+PACKAGES = ["pyserial"]
 
-# @pyimport pip
-# args = UTF8String[]
-# if haskey(ENV, "http_proxy")
-#     push!(args, "--proxy")
-#     push!(args, ENV["http_proxy"])
-# end
-# push!(args, "install")
-# push!(args, "--user")
-# append!(args, PACKAGES)
+# Import pip
+try
+    @pyimport pip
+catch
+    # If it is not found, install it
+    get_pip = joinpath(dirname(@__FILE__), "get-pip.py")
+    download("https://bootstrap.pypa.io/get-pip.py", get_pip)
+    run(`$(PyCall.python) $get_pip --user`)
+end
 
-# pip.main(args)
+@pyimport pip
+args = UTF8String[]
+if haskey(ENV, "http_proxy")
+    push!(args, "--proxy")
+    push!(args, ENV["http_proxy"])
+end
+push!(args, "install")
+push!(args, "--user")
+append!(args, PACKAGES)
+
+pip.main(args)
 
