@@ -2,7 +2,7 @@ using Base.Sys
 using PyCall
 
 # Change that to whatever packages you need.
-const PACKAGES = ["serial"]
+PACKAGES = ["serial"]
 
 # Import pip
 try
