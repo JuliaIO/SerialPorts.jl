@@ -2,10 +2,8 @@ using Base.Sys
 using PyCall
 
 pip = run(`pip -V`)
-pip3 = run(`pip3 -V`)
 
 pip.exitcode && run(`pip install serial`)
-pip3.exitcode && run(`pip3 install serial`)
 
 # # Change that to whatever packages you need.
 # PACKAGES = ["serial"]
