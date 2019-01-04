@@ -3,7 +3,7 @@ using PyCall
 
 pip = run(`pip -V`)
 
-pip.exitcode && run(`pip install serial`)
+pip.exitcode == 0 && run(`pip install serial`)
 
 # # Change that to whatever packages you need.
 # PACKAGES = ["serial"]
