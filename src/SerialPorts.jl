@@ -29,58 +29,59 @@ function __init__()
 end
 
 function SerialPort(port, baudrate::Real)
-    py_ptr = PySerial[:Serial](port, baudrate)
+    py_ptr = PySerial.Serial(port, baudrate)
     SerialPort(port,
                baudrate,
-               py_ptr[:bytesize],
-               py_ptr[:parity],
-               py_ptr[:stopbits],
-               py_ptr[:timeout],
-               py_ptr[:xonxoff],
-               py_ptr[:rtscts],
-               py_ptr[:dsrdtr], py_ptr)
+               py_ptr.bytesize,
+               py_ptr.parity,
+               py_ptr.stopbits,
+               py_ptr.timeout,
+               py_ptr.xonxoff,
+               py_ptr.rtscts,
+               py_ptr.dsrdtr,
+               py_ptr)
 end
 
 function Base.isopen(serialport::SerialPort)
-    serialport.python_ptr[:isOpen]()
+    serialport.python_ptr.isOpen()
 end
 
 function Base.open(serialport::SerialPort)
-    !isopen(serialport) && serialport.python_ptr[:open]()
+    !isopen(serialport) && serialport.python_ptr.open()
     return serialport
 end
 
 function Base.close(serialport::SerialPort)
-    serialport.python_ptr[:close]()
+    serialport.python_ptr.close()
     return serialport
 end
 
 function Base.flush(ser::SerialPort)
-    ser.python_ptr[:flush]()
+    ser.python_ptr.flush()
 end
 
 function Base.isreadable(ser::SerialPort)
-    ser.python_ptr[:readable]()
+    ser.python_ptr.readable()
 end
 
 function Base.iswritable(ser::SerialPort)
-    ser.python_ptr[:writable]()
+    ser.python_ptr.writable()
 end
 
 function Base.write(serialport::SerialPort, data::UInt8)
-    serialport.python_ptr[:write](Base.CodeUnits(String([data])))
+    serialport.python_ptr.write(Base.CodeUnits(String([data])))
 end
 
 function Base.write(serialport::SerialPort, data::String)
-    serialport.python_ptr[:write](Base.CodeUnits(data))
+    serialport.python_ptr.write(Base.CodeUnits(data))
 end
 
 function Base.read(ser::SerialPort, bytes::Integer)
-    ser.python_ptr[:read](bytes)
+    ser.python_ptr.read(bytes)
 end
 
 function Base.bytesavailable(ser::SerialPort)
-    ser.python_ptr[:inWaiting]()
+    ser.python_ptr.inWaiting()
 end
 
 function Base.readavailable(ser::SerialPort)
@@ -88,7 +89,7 @@ function Base.readavailable(ser::SerialPort)
 end
 
 function setDTR(ser::SerialPort, val)
-    ser.python_ptr[:setDTR](val)
+    ser.python_ptr.setDTR(val)
 end
 
 function _valid_linux_port(x)
@@ -112,7 +113,7 @@ function list_serialports()
         return [string("/dev/", port) for port in ports]
     end
     @static if Sys.iswindows()
-        [i[1] for i in collect(PySerialListPorts[:comports]())]
+        [get(i,0) for i in collect(PySerialListPorts.comports())]
     end
 end
 
