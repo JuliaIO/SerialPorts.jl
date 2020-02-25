@@ -2,19 +2,15 @@
 
 [![Build Status](https://travis-ci.org/JuliaIO/SerialPorts.jl.svg?branch=master)](https://travis-ci.org/JuliaIO/SerialPorts.jl)
 
-[![Build status](https://ci.appveyor.com/api/projects/status/8ugea0ou2ray29xk/branch/master?svg=true)](https://ci.appveyor.com/project/sjkelly/serialports-jl/branch/master)
-
 SerialPorts.jl lets you work with devices over serial communication with Julia.
 It is designed to mimic regular file IO as in the Base Julia library.
 
 This package requires PySerial, which is used through PyCall. Conda is used as
-a fallback so cross-platform installation is simple. Overtime, one of
-the long term objectives should be to rewrite this in Julia for better portability,
-installation, and performance.
+a fallback so cross-platform installation is simple.
 
-## Documentation
+## Quick Start
 
-A `SerialPort` can be treated like any other IO stream in Julia.
+A `SerialPort` has a minimal API similar to `IOStream` in Julia.
 
 A brief example:
 
