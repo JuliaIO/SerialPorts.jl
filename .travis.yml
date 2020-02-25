@@ -9,10 +9,12 @@ julia:
 notifications:
   email: false
 sudo: false
-script:
-    - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-    - julia -e 'using Pkg; Pkg.clone(pwd())'
-    - julia -e 'using Pkg; ENV["PYTHON"]="";Pkg.build("SerialPorts");'
-    - julia -e 'using Pkg; Pkg.test("SerialPorts", coverage=true)'
-after_success:
-  - julia -e 'using Pkg; cd(Pkg.dir("SerialPorts")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+# env:
+#     - PYTHON=""
+# script:
+#     - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+#     - julia -e 'using Pkg; Pkg.clone(pwd())'
+#     - julia -e 'using Pkg; ENV["PYTHON"]="";Pkg.build("SerialPorts");'
+#     - julia -e 'using Pkg; Pkg.test("SerialPorts", coverage=true)'
+# after_success:
+#   - julia -e 'using Pkg; cd(Pkg.dir("SerialPorts")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
