@@ -10,7 +10,7 @@ a fallback so cross-platform installation is simple.
 
 ## Quick Start
 
-A `SerialPort` a minimal API similar to `IOStream` in Julia.
+A `SerialPort` has a minimal API similar to `IOStream` in Julia.
 
 A brief example:
 
