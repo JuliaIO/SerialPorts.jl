@@ -1,5 +1,7 @@
 name = "SerialPorts"
 uuid = "5d0f9de7-4c7f-54f5-bec2-484e8c04014e"
+authors = ["Steve Kelly <kd2cca@gmail.com>"]
+version = "0.2.2"
 
 [deps]
 PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
