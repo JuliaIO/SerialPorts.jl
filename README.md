@@ -8,6 +8,8 @@ It is designed to mimic regular file IO as in the Base Julia library.
 This package requires PySerial, which is used through PyCall. Conda is used as
 a fallback so cross-platform installation is simple.
 
+Check out [LibSerialPort.jl](https://github.com/JuliaIO/LibSerialPort.jl) if you want to avoid the Python dependency.
+
 ## Quick Start
 
 A `SerialPort` has a minimal API similar to `IOStream` in Julia.
