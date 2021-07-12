@@ -42,6 +42,50 @@ function SerialPort(port, baudrate::Real)
                py_ptr)
 end
 
+function match_bitesize(bytesize::Real)
+    if bytesize == 5
+        bytesize_py = PySerial.FIVEBITS
+    elseif bytesize == 6
+        bytesize_py = PySerial.SIXBITS
+    elseif bytesize == 7
+        bytesize_py = PySerial.SEVENBITS
+    elseif bytesize == 8
+        bytesize_py = PySerial.EIGHTBITS
+    else
+        error("bytesize should be one of 5, 6, 7 or 8")
+    end
+
+    return bytesize_py
+end
+
+function SerialPort(port, baudrate::Real, bytesize::Real)
+    py_ptr = PySerial.Serial(port, baudrate, bytesize = match_bitesize(bytesize))
+    SerialPort(port,
+               baudrate,
+               bytesize,
+               py_ptr.parity,
+               py_ptr.stopbits,
+               py_ptr.timeout,
+               py_ptr.xonxoff,
+               py_ptr.rtscts,
+               py_ptr.dsrdtr,
+               py_ptr)
+end
+
+function SerialPort(port, baudrate::Real, bytesize::Real, stopbits::Real)
+    py_ptr = PySerial.Serial(port, baudrate, bytesize = match_bitesize(bytesize))
+    SerialPort(port,
+               baudrate,
+               bytesize,
+               py_ptr.parity,
+               stopbits,
+               py_ptr.timeout,
+               py_ptr.xonxoff,
+               py_ptr.rtscts,
+               py_ptr.dsrdtr,
+               py_ptr)
+end
+
 function Base.isopen(serialport::SerialPort)
     serialport.python_ptr.isOpen()
 end
